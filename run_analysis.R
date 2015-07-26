@@ -56,4 +56,4 @@ smartphone <- smartphoneAll %>%
     group_by(Activity, Subject)  %>%
     summarise_each(funs(mean))
 
-write.table(smartphone, file = "smartphoneFinal.csv", row.name=FALSE)
+write.table(smartphone, file = "smartphoneFinal.txt", row.name=FALSE)
