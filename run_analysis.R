@@ -36,11 +36,24 @@ nolabels <- rbind(train, test)
 # features.txt contains variable labels for the varibles (columns) in subject
 FeaturesLabels <- FeaturesLabels$V2 
 FeaturesLabels <- append(FeaturesLabels, c("Subject", "Activity"))
-colnames(nolabels) <- FeaturesLabels
+valid_column_names <- make.names(FeaturesLabels, unique=TRUE, allow_ = TRUE)
+colnames(nolabels) <- valid_column_names
 smartphoneAll <-tbl_df(nolabels)
 
+# Places descriptive activity names to name the activities in the data set
+smartphoneAll$Activity <- as.character(smartphoneAll$Activity)
+smartphoneAll$Activity[smartphoneAll$Activity == "1"] <- "Walking"
+smartphoneAll$Activity[smartphoneAll$Activity == "2"] <- "Walking Up Stairs"
+smartphoneAll$Activity[smartphoneAll$Activity == "3"] <- "Walking Down Stairs"
+smartphoneAll$Activity[smartphoneAll$Activity == "4"] <- "Sitting"
+smartphoneAll$Activity[smartphoneAll$Activity == "5"] <- "Standing"
+smartphoneAll$Activity[smartphoneAll$Activity == "6"] <- "Laying"
 
 
-# activitylabels.txt contains textual descriptions of the activities in y
+# Extracts only the measurements on the mean and standard deviation for each measurement. 
+smartphone <- smartphoneAll %>%
+    select(Subject, Activity, contains("mean"), contains("std"))  %>%
+    group_by(Activity, Subject)  %>%
+    summarise_each(funs(mean))
 
-write.table(smartphoneFinal, smartphoneFinal.csv, row.name=FALSE)
+write.table(smartphone, file = "smartphoneFinal.csv", row.name=FALSE)
